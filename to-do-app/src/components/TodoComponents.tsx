@@ -7,29 +7,35 @@ import { useDispatch, useSelector } from "react-redux";
 
 
 
+
 const TodoComponent = () => {
     const [newTodoText, setNewTodoText] = useState('');
     const todos = useSelector(selectTodos);
     const dispatch = useDispatch();
 
+
     const handleAddTodo = async () => {
-        if (newTodoText.trim()) {
+        const trimmedText = newTodoText.trim();
+        if (trimmedText) {
+
+
             try {
-                const docRef = await addDoc(collection(db, "todos"), {
-                    text: newTodoText,
+                const newTodo = {
+                    text: trimmedText,
                     completed: false,
                     createdAt: new Date()
-                });
-                console.log("Document written with ID: ", docRef.id);
+                }
+                const docRef = await addDoc(collection(db, "todos"), newTodo);
+
+
+                console.log(newTodo);
                 dispatch(addTodo({
                     id: docRef.id,
-                    text: newTodoText,
-                    completed: false
+                    ...newTodo
                 }));
                 setNewTodoText('');
             } catch (e) {
                 console.error("Error adding document: ", e);
-
 
             }
 
@@ -47,7 +53,7 @@ const TodoComponent = () => {
     return (
         <>
             <h1>Todo List</h1>
-            <input type="text" value={newTodoText} onChange={(e) => setNewTodoText(e.target.value)} placeholder="Add a new todo..." />
+            <input id="input" type="text" value={newTodoText} onChange={({ target }) => setNewTodoText(target.value)} placeholder="Add a new todo..." />
             <button onClick={handleAddTodo}>Add Todo</button>
             <ol>
                 {todos.map(todo => (
