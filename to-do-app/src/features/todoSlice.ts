@@ -29,8 +29,12 @@ export const fetchTodos = createAsyncThunk<Todo[]>('todos/fetchTodos', async (_,
             ...doc.data() as Todo,
             id: doc.id
         }));
+        console.log('Fetched Todos:', todoList);
+
         return todoList;
     } catch (error) {
+        console.log('Error fetching todos', error);
+
         return rejectWithValue('Failed to fetch todos');
     }
 

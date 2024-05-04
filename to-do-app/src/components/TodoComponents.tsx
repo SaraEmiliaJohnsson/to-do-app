@@ -16,19 +16,22 @@ const TodoComponent = () => {
 
     const handleAddTodo = async () => {
         const trimmedText = newTodoText.trim();
-        if (trimmedText) {
+        console.log('Adding todo', trimmedText);
 
+        if (trimmedText) {
+            console.log("Button clicked, newTodoText value:", newTodoText);
 
             try {
                 const newTodo = {
                     text: trimmedText,
                     completed: false,
-                    createdAt: new Date()
+                    createdAt: new Date().toISOString()
                 }
                 const docRef = await addDoc(collection(db, "todos"), newTodo);
 
 
-                console.log(newTodo);
+                console.log("Document written with ID:", docRef.id);
+
                 dispatch(addTodo({
                     id: docRef.id,
                     ...newTodo
@@ -44,8 +47,6 @@ const TodoComponent = () => {
 
 
 
-
-
     const handleToggleTodo = (id: string) => {
         dispatch(toggleTodo(id));
     };
@@ -55,6 +56,7 @@ const TodoComponent = () => {
             <h1>Todo List</h1>
             <input id="input" type="text" value={newTodoText} onChange={({ target }) => setNewTodoText(target.value)} placeholder="Add a new todo..." />
             <button onClick={handleAddTodo}>Add Todo</button>
+
             <ol>
                 {todos.map(todo => (
                     <li key={todo.id} onClick={() => handleToggleTodo(todo.id)}>
