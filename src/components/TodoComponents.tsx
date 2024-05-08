@@ -1,9 +1,11 @@
 
 import { addTodo, selectTodos, toggleTodo } from "../features/todoSlice";
 import { addDoc, collection } from "firebase/firestore";
-import db from "../features/firebaseConfig"
+import db, { auth } from "../features/firebaseConfig"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 
 
 
@@ -12,11 +14,13 @@ const TodoComponent = () => {
     const [newTodoText, setNewTodoText] = useState('');
     const todos = useSelector(selectTodos);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
 
     const handleAddTodo = async () => {
         const trimmedText = newTodoText.trim();
         console.log('Adding todo', trimmedText);
+
 
         if (trimmedText) {
             console.log("Button clicked, newTodoText value:", newTodoText);
@@ -51,6 +55,16 @@ const TodoComponent = () => {
         dispatch(toggleTodo(id));
     };
 
+    const signOutUser = async () => {
+        signOut(auth).then(() => {
+            console.log('Signed out');
+            navigate('/')
+        })
+            .catch((error) => {
+                console.log(error.message);
+
+            })
+    }
     return (
         <>
             <h1>Todo List</h1>
@@ -65,6 +79,7 @@ const TodoComponent = () => {
                     </li>
                 ))}
             </ol>
+            <button onClick={signOutUser}>SignOut </button>
         </>
     );
 };
